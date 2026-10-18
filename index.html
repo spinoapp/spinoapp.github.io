@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spino — sit up, gently</title>
+  <meta name="description" content="A quiet macOS menu bar app that watches your posture through the webcam and reminds you to straighten up. Everything stays on your Mac.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Spino — sit up, gently">
+  <meta property="og:description" content="Posture reminder for the macOS menu bar. Private by design — nothing leaves your Mac.">
+  <meta property="og:url" content="https://spinoapp.github.io/">
+  <meta property="og:image" content="https://spinoapp.github.io/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      --ink: #0a0a0a;
+      --muted: #8a8a92;
+      --faint: #b8b8bd;
+      --hairline: #e8e8ea;
+      --fill: #f7f7f8;
+      --red: #ed0412;
+      --good: #3dbf78;
+      --radius: 14px;
+      --max: 1040px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: #fff;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+    .label {
+      font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--faint); margin: 0 0 14px;
+    }
+    h1, h2, h3 { letter-spacing: -.02em; line-height: 1.1; margin: 0; }
+    h2 { font-size: clamp(30px, 4vw, 42px); }
+    h3 { font-size: 18px; letter-spacing: -.01em; }
+    p { margin: 0; }
+
+    /* nav */
+    nav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.85); backdrop-filter: saturate(180%) blur(16px); -webkit-backdrop-filter: saturate(180%) blur(16px); border-bottom: 1px solid var(--hairline); }
+    nav .wrap { display: flex; align-items: center; gap: 28px; height: 58px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; text-decoration: none; letter-spacing: -.01em; }
+    .brand img { width: 28px; height: 28px; border-radius: 7px; }
+    nav .links { margin-left: auto; display: flex; gap: 24px; align-items: center; font-size: 14px; }
+    nav .links a { text-decoration: none; color: var(--muted); }
+    nav .links a:hover { color: var(--ink); }
+    @media (max-width: 640px) { nav .links a:not(.btn) { display: none; } }
+
+    /* buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--ink); color: #fff !important; text-decoration: none;
+      font-weight: 600; font-size: 16px; padding: 14px 22px; border-radius: 12px;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .btn:hover { background: #2a2a2e; transform: translateY(-1px); }
+    .btn svg { width: 18px; height: 18px; }
+    .btn.small { font-size: 13px; padding: 8px 14px; border-radius: 9px; }
+    .quiet { color: var(--muted); font-size: 15px; text-decoration: none; padding: 14px 8px; }
+    .quiet:hover { color: var(--ink); }
+
+    /* hero */
+    .hero { padding: 88px 0 40px; text-align: center; }
+    .hero .icon { width: 132px; height: 132px; border-radius: 30px; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 32px rgba(0,0,0,.10); }
+    .hero h1 { font-size: clamp(46px, 7.5vw, 84px); margin: 32px 0 18px; letter-spacing: -.035em; }
+    .hero h1 em { font-style: normal; color: var(--red); }
+    .hero .lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 620px; margin: 0 auto; }
+    .cta { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 36px; flex-wrap: wrap; }
+    .meta { margin-top: 14px; font-size: 13px; color: var(--muted); }
+
+    /* demo */
+    .demo { padding: 40px 0 96px; }
+    .screen {
+      position: relative; max-width: 860px; margin: 0 auto; aspect-ratio: 16 / 10;
+      border-radius: 18px; overflow: hidden; border: 1px solid var(--hairline);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(0,0,0,.03)),
+        radial-gradient(1200px 500px at 20% 0%, #f4f4f6, #e9e9ee);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,.25);
+    }
+    .menubar {
+      position: absolute; inset: 0 0 auto 0; height: 28px; z-index: 3;
+      background: rgba(255,255,255,.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 14px;
+      font-size: 12px; font-weight: 500; color: #333;
+    }
+    .menubar .apple { margin-right: auto; display: flex; gap: 16px; }
+    .menubar .apple b { font-weight: 700; }
+    .menubar .spino { position: relative; display: flex; align-items: center; }
+    .menubar .spino img { height: 15px; }
+    .menubar .spino i { position: absolute; right: -4px; top: -1px; width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+    .window {
+      position: absolute; left: 9%; top: 15%; width: 62%; height: 70%; z-index: 1;
+      background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,.12); border: 1px solid rgba(0,0,0,.06);
+      padding: 34px 26px 26px;
+    }
+    .window::before { content: ""; position: absolute; top: 12px; left: 14px; width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; box-shadow: 16px 0 #febc2e, 32px 0 #28c840; }
+    .window span { display: block; height: 9px; border-radius: 5px; background: var(--fill); margin-bottom: 12px; }
+    .window span:nth-child(1) { width: 40%; height: 14px; background: #ececef; margin-bottom: 20px; }
+    .window span:nth-child(3) { width: 86%; }
+    .window span:nth-child(4) { width: 92%; }
+    .window span:nth-child(5) { width: 64%; }
+    .veil { position: absolute; inset: 0; z-index: 2; pointer-events: none; animation: veil 12s ease-in-out infinite; }
+    @keyframes veil {
+      0%, 22%  { box-shadow: inset 0 0 0 0 rgba(0,0,0,0); background: rgba(0,0,0,0); }
+      34%      { box-shadow: inset 0 0 120px 30px rgba(0,0,0,.55); background: rgba(0,0,0,0); }
+      66%      { box-shadow: inset 0 0 160px 60px rgba(0,0,0,.65); background: rgba(0,0,0,.5); }
+      74%, 100%{ box-shadow: inset 0 0 0 0 rgba(0,0,0,0); background: rgba(0,0,0,0); }
+    }
+    .captions { position: relative; height: 24px; margin-top: 22px; text-align: center; font-size: 14px; color: var(--muted); }
+    .captions span { position: absolute; inset: 0; opacity: 0; animation: cap 12s infinite; }
+    .captions span:nth-child(2) { animation-delay: 3s; }
+    .captions span:nth-child(3) { animation-delay: 6s; }
+    .captions span:nth-child(4) { animation-delay: 9s; }
+    .captions b { color: var(--ink); font-weight: 600; }
+    @keyframes cap { 0% { opacity: 0; } 4%, 22% { opacity: 1; } 26%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .veil { animation: none; box-shadow: inset 0 0 120px 30px rgba(0,0,0,.45); }
+      .captions span { animation: none; }
+      .captions span:nth-child(2) { opacity: 1; }
+    }
+
+    /* features */
+    section.block { padding: 96px 0; border-top: 1px solid var(--hairline); }
+    .head { max-width: 640px; margin-bottom: 52px; }
+    .head p { color: var(--muted); font-size: 19px; margin-top: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card { background: var(--fill); border-radius: var(--radius); padding: 28px; }
+    .card .glyph { width: 36px; height: 36px; border-radius: 10px; background: #fff; display: grid; place-items: center; margin-bottom: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+    .card .glyph svg { width: 18px; height: 18px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .card p { color: var(--muted); font-size: 15px; margin-top: 8px; }
+
+    /* privacy */
+    .privacy { background: var(--ink); color: #fff; border-top: 0 !important; }
+    .privacy .label { color: #6a6a70; }
+    .privacy .head p { color: #a0a0a8; }
+    .privacy ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px 48px; }
+    .privacy li { padding-left: 28px; position: relative; color: #c8c8ce; font-size: 15.5px; }
+    .privacy li b { color: #fff; font-weight: 600; display: block; margin-bottom: 4px; font-size: 16.5px; }
+    .privacy li::before { content: ""; position: absolute; left: 0; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+
+    /* install */
+    .steps { counter-reset: step; display: grid; gap: 14px; max-width: 760px; }
+    .step { counter-increment: step; display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 22px 24px; border: 1px solid var(--hairline); border-radius: var(--radius); }
+    .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .step p { color: var(--muted); font-size: 15.5px; margin-top: 4px; }
+    .step code, .note code { font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--fill); padding: 2px 6px; border-radius: 5px; color: var(--ink); }
+    .path { color: var(--ink); font-weight: 500; }
+    .note { max-width: 760px; margin-top: 24px; padding: 18px 22px; border-radius: var(--radius); background: #fff6f6; border: 1px solid #fde0e2; font-size: 14.5px; color: #5a5a60; }
+    .note b { color: var(--ink); }
+
+    /* final cta + footer */
+    .final { text-align: center; padding: 110px 0; border-top: 1px solid var(--hairline); }
+    .final h2 { margin-bottom: 30px; }
+    footer { border-top: 1px solid var(--hairline); padding: 32px 0 44px; font-size: 13px; color: var(--muted); }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><img src="assets/icon.png" alt=""> Spino</a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#install">Install</a>
+      <a class="btn small" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg">Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="icon" src="assets/icon.png" alt="Spino app icon" width="132" height="132">
+    <h1>Sit up, <em>gently.</em></h1>
+    <p class="lede">A quiet companion in your menu bar that watches your posture through the webcam and nudges you to straighten up — without ever stealing your attention.</p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.41 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.14-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.59-.75 2.99-.75 1.4 0 1.79.75 3.01.72 1.24-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.45-3.71zM14.08 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.82 1.03.08 2.07-.52 2.71-1.28z"/></svg>
+        Download for Mac
+      </a>
+      <a class="quiet" href="#install">How to install →</a>
+    </div>
+    <p class="meta"><span id="version">Free</span> · macOS 14 or later · Apple Silicon &amp; Intel</p>
+  </div>
+</header>
+
+<section class="demo" aria-label="How Spino reminds you">
+  <div class="wrap">
+    <div class="screen" aria-hidden="true">
+      <div class="menubar">
+        <div class="apple"><b>Finder</b><span>File</span><span>Edit</span><span>View</span></div>
+        <div class="spino"><img src="assets/menubar.svg" alt=""><i></i></div>
+        <span>Sun 9:41</span>
+      </div>
+      <div class="window"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="veil"></div>
+    </div>
+    <div class="captions">
+      <span><b>Sitting well.</b> Spino stays out of the way.</span>
+      <span><b>Slouching for 3 seconds.</b> The screen edges darken — a quiet cue.</span>
+      <span><b>Still slouching.</b> The whole screen dims slowly, never fully black.</span>
+      <span><b>Straighten up.</b> Everything clears instantly.</span>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="features">
+  <div class="wrap">
+    <div class="head">
+      <p class="label">Features</p>
+      <h2>Calibrate once. Forget it's there.</h2>
+      <p>Spino learns how <em>you</em> sit when you sit well, then only speaks up when you drift away from it.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="glyph"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3>Personal calibration</h3>
+        <p>Sit the way you want to sit for about three seconds. That becomes your baseline — recalibrate any time from the menu bar.</p>
+      </div>
+      <div class="card">
+        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></div>
+        <h3>Posture drift</h3>
+        <p>Detects slouching, sideways lean, head tilt and leaning in too close to the screen.</p>
+      </div>
+      <div class="card">
+        <div class="glyph"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18" opacity=".35"/><path d="M8 21h8"/></svg></div>
+        <h3>Gentle escalation</h3>
+        <p>Nothing for the first 3 seconds. Then the edges darken, and the screen dims over ten seconds until you straighten up. Max dim is up to you.</p>
+      </div>
+      <div class="card">
+        <div class="glyph"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg></div>
+        <h3>Break reminders</h3>
+        <p>After a stretch of sitting (3–120 min, your choice), a small card asks you to stand up. A minute out of frame counts as a break.</p>
+      </div>
+      <div class="card">
+        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg></div>
+        <h3>Pause when you need to</h3>
+        <p>Snooze alerts for 30 minutes, or pause Spino entirely — the camera stops too. It also pauses on its own when you step away.</p>
+      </div>
+      <div class="card">
+        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 7.5a8 8 0 1 0 11.4 0"/></svg></div>
+        <h3>Open at login</h3>
+        <p>Optional and off by default. Uses the system's own Login Items list, so you stay in control.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block privacy" id="privacy">
+  <div class="wrap">
+    <div class="head">
+      <p class="label">Privacy</p>
+      <h2>Your camera never leaves your Mac.</h2>
+      <p>Not as a promise — as a property of the app. macOS enforces it.</p>
+    </div>
+    <ul>
+      <li><b>Processed in memory</b>Every frame is analysed on your Mac with Apple's Vision framework, then dropped. Nothing is recorded or written to disk.</li>
+      <li><b>No network, at all</b>Spino runs in the App Sandbox with the camera as its only capability. There is no networking code, and macOS would block it anyway.</li>
+      <li><b>Camera off when you're away</b>Screen locked, display asleep, Mac asleep or another user logged in — the camera turns off and comes back on its own.</li>
+      <li><b>Always visible</b>A green dot in the menu bar shows exactly when the camera is active.</li>
+      <li><b>Almost nothing stored</b>The only saved data is your calibration: five numbers, their tolerances and a timestamp.</li>
+      <li><b>No account, no tracking</b>No sign-up, no analytics, no telemetry. Just the app.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="block" id="install">
+  <div class="wrap">
+    <div class="head">
+      <p class="label">Install</p>
+      <h2>Up and running in a minute.</h2>
+      <p>Spino isn't from the App Store yet, so macOS asks you to approve it once.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div><h3>Download and drag to Applications</h3><p>Open <code>Spino.dmg</code> and drag Spino onto the <span class="path">Applications</span> folder.</p></div></div>
+      <div class="step"><div><h3>Try to open it once</h3><p>Launch Spino from Applications. macOS will say it can't verify the developer — click <span class="path">Done</span>.</p></div></div>
+      <div class="step"><div><h3>Allow it in System Settings</h3><p>Go to <span class="path">System Settings → Privacy &amp; Security</span>, scroll down and click <span class="path">Open Anyway</span> next to Spino. Confirm with your password or Touch ID.</p></div></div>
+      <div class="step"><div><h3>Allow the camera and calibrate</h3><p>Spino lives in the menu bar (no Dock icon). Grant camera access, sit up straight for three seconds, and you're done.</p></div></div>
+    </div>
+    <p class="note"><b>On macOS 14 Sonoma</b> you can skip step 3: right-click Spino in Applications, choose <b>Open</b>, then <b>Open</b> again. You only need to do this once per version.</p>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Your spine will thank you.</h2>
+    <a class="btn" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.41 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.14-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.59-.75 2.99-.75 1.4 0 1.79.75 3.01.72 1.24-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.45-3.71zM14.08 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.82 1.03.08 2.07-.52 2.71-1.28z"/></svg>
+      Download for Mac
+    </a>
+    <p class="meta"><a href="https://github.com/spinoapp/spinoapp.github.io/releases">All versions &amp; release notes</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Spino</span>
+    <span>Made on a Mac, for the people sitting in front of one.</span>
+  </div>
+</footer>
+
+<script>
+  // Fill in the current version from the latest GitHub release; the static text is the fallback.
+  fetch("https://api.github.com/repos/spinoapp/spinoapp.github.io/releases/latest")
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(rel => {
+      const dmg = (rel.assets || []).find(a => a.name.endsWith(".dmg"));
+      const size = dmg ? ` · ${(dmg.size / 1048576).toFixed(1)} MB` : "";
+      document.getElementById("version").textContent = `Version ${rel.tag_name.replace(/^v/, "")}${size}`;
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>
