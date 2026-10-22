@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Spino: posture app for Mac. Sit up, the screen clears.</title>
-  <meta name="description" content="Back hurts after a day at the Mac? Spino watches your posture through the webcam and dims the screen when you slouch. Sit up and it clears. Free, and nothing leaves your Mac.">
+  <meta name="description" content="Back hurts after a day at the Mac? Spino watches your posture through the webcam and dims the screen when you slouch. Sit up and it clears. Free for 4 hours a day, and nothing leaves your Mac.">
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Spino: back hurts after a day at the Mac?">
-  <meta property="og:description" content="Spino dims your screen when you slouch and clears it when you sit up. Free posture app for the macOS menu bar. Nothing leaves your Mac.">
+  <meta property="og:description" content="Spino dims your screen when you slouch and clears it when you sit up. Posture app for the macOS menu bar, free for 4 hours a day. Nothing leaves your Mac.">
   <meta property="og:url" content="https://spinoapp.github.io/">
   <meta property="og:image" content="https://spinoapp.github.io/assets/og.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -217,6 +217,34 @@
     @media (max-width: 560px) { .install { grid-template-columns: 1fr; } }
 
     /* final */
+    #pricing { text-align: center; }
+    #pricing .head { margin: 0 auto; max-width: 620px; }
+    #pricing h2 { text-wrap: balance; }
+    .tiers { margin: 48px auto 0; max-width: 680px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: #fff; border-radius: 24px; box-shadow: 0 24px 60px -36px rgba(0,0,0,.3); }
+    .tier { padding: 34px 24px 30px; }
+    .tier + .tier { border-left: 1px solid var(--line); }
+    .tier .tag { font-size: 12px; font-weight: 700; letter-spacing: .16em; color: var(--muted); }
+    .tier .tag.red { color: var(--red); }
+    .tier .big { font-size: clamp(40px, 6vw, 56px); font-weight: 750; letter-spacing: -.04em; line-height: 1; margin: 14px 0 10px; }
+    .tier p { color: var(--muted); font-size: 15px; }
+    .tier .big .alt { font-size: .5em; font-weight: 650; letter-spacing: -.02em; color: var(--muted); }
+    .tiers-foot { margin-top: 26px; font-size: 15px; color: var(--muted); }
+    .tiers-foot a { color: var(--ink); font-weight: 650; text-decoration: none; margin-left: 6px; }
+    .tiers-foot a:hover { text-decoration: underline; }
+    @media (max-width: 520px) { .tiers { grid-template-columns: minmax(0, 1fr); } .tier + .tier { border-left: 0; border-top: 1px solid var(--line); } }
+    .screen-wrap { position: relative; }
+    .screen-play { position: absolute; inset: 0; z-index: 10; border: 0; padding: 0; margin: 0; background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; border-radius: 22px; font-family: inherit; }
+    .play-ic { width: 76px; height: 76px; border-radius: 50%; background: rgba(18,18,20,.88); color: #fff; display: grid; place-items: center; box-shadow: 0 14px 40px rgba(0,0,0,.3); transition: transform .18s ease, background .18s ease; }
+    .play-ic svg { width: 28px; height: 28px; margin-left: 4px; }
+    .play-label { font-size: 14px; font-weight: 650; color: var(--ink); background: rgba(255,255,255,.85); padding: 7px 14px; border-radius: 999px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .screen-play:hover .play-ic { transform: scale(1.08); background: var(--ink); }
+    .screen-play:focus-visible { outline: 3px solid rgba(18,18,20,.35); outline-offset: 4px; }
+    @media (max-width: 420px) { .play-ic { width: 56px; height: 56px; } .play-ic svg { width: 22px; height: 22px; } .play-label { font-size: 12.5px; } }
+    .film { padding: 0; border: 0; background: transparent; width: min(1080px, 92vw); max-width: none; overflow: visible; }
+    .film::backdrop { background: rgba(10,10,12,.82); }
+    .film video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; background: #000; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+    .film-close { position: absolute; top: -48px; right: 0; width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; }
+    .film-close:hover { background: rgba(255,255,255,.24); }
     .final { text-align: center; padding: 120px 0; }
     .final img { width: 96px; height: 96px; margin: 0 auto 28px; }
     .final h2 { font-size: clamp(34px, 5vw, 56px); letter-spacing: -.035em; }
@@ -269,9 +297,9 @@
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.41 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.14-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.59-.75 2.99-.75 1.4 0 1.79.75 3.01.72 1.24-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.45-3.71zM14.08 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.82 1.03.08 2.07-.52 2.71-1.28z"/></svg>
           Download for Mac
         </a>
-        <a class="link" href="#how">See how it works →</a>
+        <a class="link" href="#how" data-film data-umami-event="play-film" data-umami-event-place="hero">See how it works →</a>
       </div>
-      <p class="meta"><span id="version">Free · version 1.0</span><span>macOS 14 or later</span><span>Nothing leaves your Mac</span></p>
+      <p class="meta"><span>Try free now</span><span>macOS 14 or later</span></p>
     </div>
 
     <div class="stage" aria-label="The Spino menu: a face inside a break ring, Snooze and Pause buttons">
@@ -304,6 +332,11 @@
       <h2>Slouch, and the screen dims. Sit up, and it clears.</h2>
       <p>No pop-ups, no sounds, no charts to read. Your screen simply gets harder to look at until you sit the way you meant to.</p>
     </div>
+    <div class="screen-wrap">
+    <button class="screen-play" type="button" data-film data-umami-event="play-film" data-umami-event-place="demo" aria-label="Play the 15-second demo">
+      <span class="play-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+      <span class="play-label">See demo 00:15</span>
+    </button>
     <div class="screen" aria-hidden="true">
       <div class="bar">
         <div class="apps"><b>Finder</b><span>File</span><span>Edit</span><span>View</span></div>
@@ -313,6 +346,7 @@
       <div class="win"><span></span><span></span><span></span><span></span><span></span></div>
       <div class="mini"><div class="f" data-eyes><i></i><i></i></div></div>
       <div class="veil"></div>
+    </div>
     </div>
     <div class="captions" aria-live="off">
       <span><b>Sitting well.</b> Nothing happens.</span>
@@ -397,11 +431,39 @@
   </div>
 </section>
 
-<section class="final mist">
+<section class="mist" id="pricing">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Price</p>
+      <h2>A coffee for a healthy back.</h2>
+      <p>Try it free. When it helps, keep it for good for the price of one coffee.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier">
+        <div class="tag">FREE</div>
+        <div class="big">4 h</div>
+        <p>of posture watching a day</p>
+      </div>
+      <div class="tier">
+        <div class="tag red">LIFETIME</div>
+        <div class="big">$6 <span class="alt">/ €5</span></div>
+        <p>once, for life, no daily limit</p>
+      </div>
+    </div>
+    <p class="tiers-foot">Every feature is in both.<a href="buy/" data-umami-event="pricing-buy">Get lifetime access →</a></p>
+  </div>
+</section>
+
+<dialog class="film" id="film" aria-label="Spino in 15 seconds">
+  <button class="film-close" type="button" id="filmClose" aria-label="Close">×</button>
+  <video id="filmVideo" src="assets/spino-promo.mp4" poster="assets/spino-promo-poster.jpg" controls playsinline preload="none"></video>
+</dialog>
+
+<section class="final">
   <div class="wrap">
     <img src="assets/icon.png" alt="" width="96" height="96">
     <h2>Give your back a break.</h2>
-    <p class="sub">Free, private, and quiet until you slouch.</p>
+    <p class="sub">Free for 4 hours a day, private, and quiet until you slouch.</p>
     <a class="btn" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg" data-umami-event="download" data-umami-event-place="footer">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.41 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.14-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.59-.75 2.99-.75 1.4 0 1.79.75 3.01.72 1.24-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.45-3.71zM14.08 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.82 1.03.08 2.07-.52 2.71-1.28z"/></svg>
       Download for Mac
@@ -495,15 +557,25 @@
     draw();
   })();
 
-  // Fill in the current version from the latest GitHub release; the static text is the fallback.
-  fetch("https://api.github.com/repos/spinoapp/spinoapp.github.io/releases/latest")
-    .then(r => r.ok ? r.json() : Promise.reject())
-    .then(rel => {
-      const dmg = (rel.assets || []).find(a => a.name.endsWith(".dmg"));
-      const size = dmg ? ` · ${(dmg.size / 1048576).toFixed(1)} MB` : "";
-      document.getElementById("version").textContent = `Free · version ${rel.tag_name.replace(/^v/, "")}${size}`;
-    })
-    .catch(() => {});
+
+  // The 15-second film: opens in a modal and plays with sound (the click allows it).
+  (() => {
+    const dlg = document.getElementById("film"), video = document.getElementById("filmVideo");
+    const close = document.getElementById("filmClose");
+    if (!dlg || !video) return;
+    const shut = () => dlg.open && dlg.close();
+    document.querySelectorAll("[data-film]").forEach(el => el.addEventListener("click", e => {
+      e.preventDefault();
+      dlg.showModal();
+      video.currentTime = 0;
+      video.muted = false;
+      video.play().catch(() => {});
+    }));
+    close.addEventListener("click", shut);
+    dlg.addEventListener("click", e => { if (e.target === dlg) shut(); });
+    dlg.addEventListener("close", () => video.pause());
+    video.addEventListener("ended", () => setTimeout(shut, 600));
+  })();
 </script>
 </body>
 </html>
