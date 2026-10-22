@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spino full version: lifetime access, no daily limit</title>
+  <meta name="description" content="Remove the 4-hour daily limit from Spino. One payment, lifetime access, and your posture data still never leaves your Mac.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <meta property="og:title" content="Spino full version">
+  <meta property="og:description" content="Lifetime access to Spino, the posture app for Mac. No daily limit, no subscription.">
+  <meta property="og:image" content="https://spinoapp.github.io/assets/og.png">
+  <style>
+    :root {
+      --ink: #121214; --ink-2: #3a3a40; --muted: #6b6b72; --faint: #a1a1a8;
+      --line: #e8e8eb; --mist: #f4f4f1; --chip: #f2f2f4; --red: #ed0412; --good: #1f9d55;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: #fff; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    img, svg { display: block; }
+    h1, h2, h3 { margin: 0; letter-spacing: -.025em; line-height: 1.1; }
+    p { margin: 0; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .eyebrow { font-size: 12px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+    .eyebrow b { color: var(--red); }
+
+    nav .wrap { display: flex; align-items: center; height: 64px; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; font-size: 19px; letter-spacing: -.02em; text-decoration: none; }
+    .brand img { width: 34px; height: 34px; }
+    nav .back { margin-left: auto; font-size: 14px; color: var(--muted); text-decoration: none; }
+    nav .back:hover { color: var(--ink); }
+
+    .hero { padding: 64px 0 112px; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 64px; align-items: start; }
+    .hero h1 { font-size: clamp(40px, 6vw, 68px); letter-spacing: -.04em; margin: 18px 0 22px; }
+    .lede { font-size: clamp(18px, 2vw, 20px); color: var(--ink-2); max-width: 520px; }
+    .compare { margin-top: 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 520px; }
+    .plan { border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+    .plan.pro { border-color: var(--ink); }
+    .plan h3 { font-size: 15px; letter-spacing: -.01em; }
+    .plan .big { font-size: 26px; font-weight: 700; letter-spacing: -.03em; margin-top: 8px; }
+    .plan p { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+
+    .card { background: var(--ink); color: #f5f5f7; border-radius: 28px; padding: 32px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.45); }
+    .card .tag { font-size: 12px; font-weight: 700; letter-spacing: .14em; color: var(--red); }
+    .card h2 { font-size: 28px; margin-top: 8px; }
+    .card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    .card li { display: flex; gap: 10px; align-items: flex-start; font-size: 15.5px; color: #d1d1d6; }
+    .card li svg { flex-shrink: 0; margin-top: 4px; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; height: 54px; border-radius: 999px; background: #fff; color: var(--ink); font-weight: 650; font-size: 16.5px; text-decoration: none; transition: transform .15s ease, background .15s ease; }
+    .btn:hover { background: #ececef; transform: translateY(-1px); }
+    .fine { font-size: 13px; color: #a1a1a8; text-align: center; margin-top: -8px; }
+    .fine span { display: inline-flex; align-items: center; gap: 6px; }
+
+    .faq { background: var(--mist); padding: 96px 0; }
+    .faq h2 { font-size: clamp(28px, 3.6vw, 40px); margin-bottom: 36px; }
+    .qa { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; border-top: 1px solid #ddddd8; }
+    .qa div { padding: 24px 0; border-bottom: 1px solid #ddddd8; }
+    .qa h3 { font-size: 17px; letter-spacing: -.01em; }
+    .qa p { color: var(--muted); font-size: 15.5px; margin-top: 6px; }
+    .qa a { color: var(--ink); }
+    .qa code { font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; background: #e9e9e4; padding: 1px 6px; border-radius: 5px; color: var(--ink); }
+
+    footer { padding: 30px 0 44px; font-size: 13px; color: var(--muted); }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 860px) {
+      .hero { padding: 32px 0 80px; }
+      .grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+      .qa { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 420px) {
+      .wrap { padding: 0 18px; }
+      .card { padding: 24px 20px; border-radius: 22px; }
+      .compare { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../"><img src="../assets/icon.png" alt="" width="34" height="34"> Spino</a>
+    <a class="back" href="../">← Back to Spino</a>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="wrap grid">
+      <div>
+        <p class="eyebrow"><b>●</b>&nbsp; Spino full version</p>
+        <h1>No more daily limit.</h1>
+        <p class="lede">The free version watches your posture for 4 hours a day, then goes to sleep. Lifetime access keeps Spino awake for your whole working day, every day.</p>
+        <div class="compare">
+          <div class="plan"><h3>Free</h3><div class="big">4 h</div><p>of posture watching a day</p></div>
+          <div class="plan pro"><h3>Lifetime</h3><div class="big">All day</div><p>no limit, one payment</p></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <span class="tag">LIFETIME ACCESS</span>
+          <h2>Pay once. Sit better for good.</h2>
+        </div>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>No 4-hour daily limit</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>One payment, no subscription</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>License key right after payment</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Still private: nothing leaves your Mac</li>
+        </ul>
+        <a class="btn" id="buy" href="#">
+          Buy lifetime access
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <p class="fine"><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure checkout with Stripe</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="wrap">
+      <h2>Good to know</h2>
+      <div class="qa">
+        <div><h3>How do I activate it?</h3><p>After paying you get a key like <code>SPINO-PRO-091026-…</code>. Open the Spino menu, click <b>Activate full version</b>, paste the key, done. Do it within 36 hours of buying, after that the key can no longer be activated.</p></div>
+        <div><h3>Is it a subscription?</h3><p>No. You pay once and keep the full version.</p></div>
+        <div><h3>Does activation need the internet?</h3><p>No. The key is checked on your Mac. Spino has no network access at all.</p></div>
+        <div><h3>Not sure yet?</h3><p><a href="../#install">Download Spino for free</a> and try it. The free version has every feature, just 4 hours a day.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Spino</span>
+    <span>Made on a Mac, for the people sitting in front of one.</span>
+  </div>
+</footer>
+
+<script>
+  // Stripe Payment Link. Set its "after payment" redirect to
+  // https://spinoapp.github.io/buy/thank-you/?session_id={CHECKOUT_SESSION_ID}
+  const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/REPLACE_WITH_YOUR_LINK";
+  document.getElementById("buy").href = STRIPE_PAYMENT_LINK;
+</script>
+</body>
+</html>
