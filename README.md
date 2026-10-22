@@ -17,9 +17,16 @@ In the app repository:
 Then attach it to a new release here (bump the tag to match `MARKETING_VERSION`):
 
 ```bash
-gh release create v0.2 ../spino/dist/Spino.dmg \
-  --repo spinoapp/spinoapp.github.io --title "Spino 0.2" --notes "…"
+gh release create v1.0 ../spino/dist/Spino.dmg \
+  --repo spinoapp/spinoapp.github.io --title "Spino 1.0" --notes "…"
 ```
 
 The download buttons point at `releases/latest/download/Spino.dmg`, so the site
 picks up the new build without any change. Keep the asset name `Spino.dmg`.
+
+Only one release is kept: the newest. A new release becomes `latest`
+automatically, so delete older ones together with their tags:
+
+```bash
+gh release delete v0.9 --cleanup-tag --yes   # an older release
+```
