@@ -3,176 +3,253 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Spino — sit up, gently</title>
-  <meta name="description" content="A quiet macOS menu bar app that watches your posture through the webcam and reminds you to straighten up. Everything stays on your Mac.">
+  <title>Spino: posture app for Mac. Sit up, the screen clears.</title>
+  <meta name="description" content="Back hurts after a day at the Mac? Spino watches your posture through the webcam and dims the screen when you slouch. Sit up and it clears. Free, and nothing leaves your Mac.">
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Spino — sit up, gently">
-  <meta property="og:description" content="Posture reminder for the macOS menu bar. Private by design — nothing leaves your Mac.">
+  <meta property="og:title" content="Spino: back hurts after a day at the Mac?">
+  <meta property="og:description" content="Spino dims your screen when you slouch and clears it when you sit up. Free posture app for the macOS menu bar. Nothing leaves your Mac.">
   <meta property="og:url" content="https://spinoapp.github.io/">
   <meta property="og:image" content="https://spinoapp.github.io/assets/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <style>
     :root {
-      --ink: #0a0a0a;
-      --muted: #8a8a92;
-      --faint: #b8b8bd;
-      --hairline: #e8e8ea;
-      --fill: #f7f7f8;
+      --ink: #121214;
+      --ink-2: #3a3a40;
+      --muted: #6b6b72;
+      --faint: #a1a1a8;
+      --line: #e8e8eb;
+      --mist: #f4f4f1;
+      --chip: #f2f2f4;
+      --card: #f7f7f8;
       --red: #ed0412;
-      --good: #3dbf78;
-      --radius: 14px;
-      --max: 1040px;
+      --good: #1f9d55;
+      --bad: #e6423d;
+      --max: 1080px;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
       color: var(--ink);
       background: #fff;
       -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; }
+    img, svg { display: block; }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
-    .label {
-      font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-      color: var(--faint); margin: 0 0 14px;
-    }
-    h1, h2, h3 { letter-spacing: -.02em; line-height: 1.1; margin: 0; }
-    h2 { font-size: clamp(30px, 4vw, 42px); }
-    h3 { font-size: 18px; letter-spacing: -.01em; }
+    h1, h2, h3 { margin: 0; letter-spacing: -.025em; line-height: 1.08; }
     p { margin: 0; }
+    .eyebrow { font-size: 12px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+    .eyebrow b { color: var(--red); font-weight: 650; }
 
     /* nav */
-    nav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.85); backdrop-filter: saturate(180%) blur(16px); -webkit-backdrop-filter: saturate(180%) blur(16px); border-bottom: 1px solid var(--hairline); }
-    nav .wrap { display: flex; align-items: center; gap: 28px; height: 58px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; text-decoration: none; letter-spacing: -.01em; }
-    .brand img { width: 28px; height: 28px; border-radius: 7px; }
-    nav .links { margin-left: auto; display: flex; gap: 24px; align-items: center; font-size: 14px; }
-    nav .links a { text-decoration: none; color: var(--muted); }
-    nav .links a:hover { color: var(--ink); }
-    @media (max-width: 640px) { nav .links a:not(.btn) { display: none; } }
+    nav { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.86); backdrop-filter: saturate(180%) blur(16px); -webkit-backdrop-filter: saturate(180%) blur(16px); }
+    nav .wrap { display: flex; align-items: center; height: 64px; gap: 28px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; font-size: 19px; letter-spacing: -.02em; text-decoration: none; }
+    .brand img { width: 34px; height: 34px; }
+    nav .links { margin-left: auto; display: flex; align-items: center; gap: 26px; font-size: 14px; }
+    nav .links a:not(.btn) { color: var(--muted); text-decoration: none; }
+    nav .links a:not(.btn):hover { color: var(--ink); }
+    @media (max-width: 680px) { nav .links a:not(.btn) { display: none; } }
 
-    /* buttons */
     .btn {
       display: inline-flex; align-items: center; gap: 10px;
-      background: var(--ink); color: #fff !important; text-decoration: none;
-      font-weight: 600; font-size: 16px; padding: 14px 22px; border-radius: 12px;
+      background: var(--ink); color: #fff; text-decoration: none;
+      font-weight: 600; font-size: 16px; padding: 15px 24px; border-radius: 999px;
       transition: transform .15s ease, background .15s ease;
     }
-    .btn:hover { background: #2a2a2e; transform: translateY(-1px); }
+    .btn:hover { background: #2c2c30; transform: translateY(-1px); }
     .btn svg { width: 18px; height: 18px; }
-    .btn.small { font-size: 13px; padding: 8px 14px; border-radius: 9px; }
-    .quiet { color: var(--muted); font-size: 15px; text-decoration: none; padding: 14px 8px; }
-    .quiet:hover { color: var(--ink); }
+    .btn.small { font-size: 13.5px; padding: 9px 16px; }
+    .link { color: var(--muted); font-size: 15px; text-decoration: none; }
+    .link:hover { color: var(--ink); }
 
     /* hero */
-    .hero { padding: 88px 0 40px; text-align: center; }
-    .hero .icon { width: 132px; height: 132px; border-radius: 30px; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 32px rgba(0,0,0,.10); }
-    .hero h1 { font-size: clamp(46px, 7.5vw, 84px); margin: 32px 0 18px; letter-spacing: -.035em; }
-    .hero h1 em { font-style: normal; color: var(--red); }
-    .hero .lede { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 620px; margin: 0 auto; }
-    .cta { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 36px; flex-wrap: wrap; }
-    .meta { margin-top: 14px; font-size: 13px; color: var(--muted); }
+    .hero { padding: 72px 0 96px; }
+    .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+    .hero h1 { font-size: clamp(44px, 6.4vw, 76px); letter-spacing: -.04em; margin: 18px 0 24px; }
+    .hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--ink-2); max-width: 520px; }
+    .hero .lede strong { color: var(--ink); font-weight: 600; }
+    .cta { display: flex; align-items: center; gap: 22px; margin-top: 36px; flex-wrap: wrap; }
+    .meta { margin-top: 16px; font-size: 13.5px; color: var(--muted); }
+    .meta span + span::before { content: "·"; margin: 0 8px; color: var(--faint); }
+    @media (max-width: 860px) {
+      .hero { padding: 40px 0 72px; }
+      .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+      .hero .stage { justify-self: center; }
+    }
 
-    /* demo */
-    .demo { padding: 40px 0 96px; }
+    /* popover mockup */
+    .stage { position: relative; padding: 28px; border-radius: 32px; background: var(--mist); justify-self: end; }
+    .pop {
+      position: relative; width: 300px; background: #fff; border-radius: 18px; overflow: hidden;
+      box-shadow: 0 0 0 .5px rgba(0,0,0,.12), 0 24px 60px rgba(0,0,0,.16);
+      font-size: 13px; color: var(--ink);
+    }
+    .pop .recal { position: absolute; right: 12px; top: 12px; width: 30px; height: 30px; border-radius: 50%; background: var(--chip); display: grid; place-items: center; }
+    .pop .hero-face { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 22px 20px 16px; }
+    .ring { position: relative; width: 168px; height: 168px; }
+    .ring svg { position: absolute; inset: 0; }
+    .face { position: absolute; left: 20px; top: 20px; width: 128px; height: 128px; border-radius: 50%; background: #121214; }
+    .face i { position: absolute; top: 50px; width: 15px; height: 15px; border-radius: 50%; background: #fff; box-shadow: 0 0 16px rgba(255,255,255,.5); }
+    .face i:first-child { left: 40px; } .face i:last-child { left: 73px; }
+    /* Eyes follow the pointer (set from JS) and blink now and then. */
+    [data-eyes] i { transform: translate(var(--ex, 0px), var(--ey, 0px)) scaleY(var(--lid, 1)); transition: transform 90ms linear; }
+    [data-eyes].blink { --lid: .12; }
+    .face, .pop .title, .ring .prog { transition: opacity .25s ease, background .25s ease; }
+    .pop.paused .face { opacity: .3; }
+    .pop.paused .ring .prog { opacity: 0; }
+    button.pill { border: 0; font: inherit; color: inherit; cursor: pointer; }
+    button.pill:hover { background: #eaeaed; }
+    button.pill[aria-pressed="true"] { background: var(--ink); color: #fff; }
+    .hint { margin-top: 14px; text-align: center; font-size: 12.5px; color: var(--muted); }
+    .pop .title { font-size: 19px; font-weight: 650; letter-spacing: -.3px; }
+    .chips { display: flex; gap: 6px; }
+    .chip { padding: 4px 10px; border-radius: 999px; background: var(--chip); font-size: 11.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .pills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 14px 8px; }
+    .pill { height: 38px; border-radius: 999px; background: var(--chip); display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12.5px; font-weight: 550; }
+    .addons { margin: 0 14px; height: 38px; border-radius: 12px; background: var(--card); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 12.5px; font-weight: 550; }
+    .addons span { display: flex; align-items: center; gap: 8px; }
+    .popfoot { display: flex; align-items: center; justify-content: space-between; padding: 16px 26px 12px; font-size: 11.5px; color: var(--muted); }
+    .popfoot .cam { display: flex; align-items: center; gap: 5px; }
+    .popfoot .cam i { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+    .popfoot .right { display: flex; align-items: center; gap: 12px; }
+
+    /* sections */
+    section { padding: 112px 0; }
+    section.mist { background: var(--mist); }
+    .head { max-width: 680px; margin-bottom: 56px; }
+    .head h2 { font-size: clamp(32px, 4.4vw, 48px); margin-top: 14px; }
+    .head p:not(.eyebrow) { font-size: 19px; color: var(--ink-2); margin-top: 18px; }
+
+    /* how it works */
+    .steps3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 40px; }
+    .step3 { background: #fff; border-radius: 20px; padding: 28px; }
+    .step3 .n { font-size: 13px; font-weight: 700; color: var(--red); }
+    .step3 h3 { font-size: 20px; margin: 10px 0 8px; }
+    .step3 p { color: var(--muted); font-size: 15.5px; }
+    @media (max-width: 860px) { .steps3 { grid-template-columns: 1fr; } }
+
     .screen {
-      position: relative; max-width: 860px; margin: 0 auto; aspect-ratio: 16 / 10;
-      border-radius: 18px; overflow: hidden; border: 1px solid var(--hairline);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(0,0,0,.03)),
-        radial-gradient(1200px 500px at 20% 0%, #f4f4f6, #e9e9ee);
-      box-shadow: 0 30px 80px -20px rgba(0,0,0,.25);
+      position: relative; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden;
+      background: linear-gradient(160deg, #e9ecef, #dde2e6); box-shadow: 0 30px 80px -30px rgba(0,0,0,.35);
     }
-    .menubar {
-      position: absolute; inset: 0 0 auto 0; height: 28px; z-index: 3;
-      background: rgba(255,255,255,.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      display: flex; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 14px;
-      font-size: 12px; font-weight: 500; color: #333;
-    }
-    .menubar .apple { margin-right: auto; display: flex; gap: 16px; }
-    .menubar .apple b { font-weight: 700; }
-    .menubar .spino { position: relative; display: flex; align-items: center; }
-    .menubar .spino img { height: 15px; }
-    .menubar .spino i { position: absolute; right: -4px; top: -1px; width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
-    .window {
-      position: absolute; left: 9%; top: 15%; width: 62%; height: 70%; z-index: 1;
-      background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,.12); border: 1px solid rgba(0,0,0,.06);
-      padding: 34px 26px 26px;
-    }
-    .window::before { content: ""; position: absolute; top: 12px; left: 14px; width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; box-shadow: 16px 0 #febc2e, 32px 0 #28c840; }
-    .window span { display: block; height: 9px; border-radius: 5px; background: var(--fill); margin-bottom: 12px; }
-    .window span:nth-child(1) { width: 40%; height: 14px; background: #ececef; margin-bottom: 20px; }
-    .window span:nth-child(3) { width: 86%; }
-    .window span:nth-child(4) { width: 92%; }
-    .window span:nth-child(5) { width: 64%; }
-    .veil { position: absolute; inset: 0; z-index: 2; pointer-events: none; animation: veil 12s ease-in-out infinite; }
+    .screen .bar { position: absolute; inset: 0 0 auto 0; height: 30px; z-index: 4; background: rgba(255,255,255,.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: flex-end; gap: 16px; padding: 0 16px; font-size: 12.5px; font-weight: 500; color: #333; }
+    .screen .bar .apps { margin-right: auto; display: flex; gap: 18px; }
+    .screen .bar .apps b { font-weight: 700; }
+    .screen .bar img { height: 15px; }
+    .screen .win { position: absolute; left: 8%; top: 16%; width: 58%; height: 72%; z-index: 1; background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,.12); padding: 40px 30px; }
+    .screen .win::before { content: ""; position: absolute; top: 14px; left: 16px; width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; box-shadow: 18px 0 #febc2e, 36px 0 #28c840; }
+    .screen .win span { display: block; height: 10px; border-radius: 5px; background: var(--card); margin-bottom: 14px; }
+    .screen .win span:nth-child(1) { width: 42%; height: 16px; background: #ececef; margin-bottom: 24px; }
+    .screen .win span:nth-child(3) { width: 88%; } .screen .win span:nth-child(4) { width: 94%; } .screen .win span:nth-child(5) { width: 66%; }
+    .screen .mini { position: absolute; right: 9%; top: 22%; z-index: 1; width: 18%; aspect-ratio: 1; border-radius: 50%; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); display: grid; place-items: center; }
+    .screen .mini .f { width: 70%; aspect-ratio: 1; border-radius: 50%; background: #121214; position: relative; animation: face 12s infinite; }
+    .screen .mini .f i { position: absolute; top: 36%; width: 13%; aspect-ratio: 1; border-radius: 50%; background: #fff; animation: eyes 12s infinite; }
+    .screen .mini .f i:first-child { left: 28%; } .screen .mini .f i:last-child { left: 59%; }
+    .veil { position: absolute; inset: 0; z-index: 3; pointer-events: none; animation: veil 12s ease-in-out infinite; }
     @keyframes veil {
-      0%, 22%  { box-shadow: inset 0 0 0 0 rgba(0,0,0,0); background: rgba(0,0,0,0); }
-      34%      { box-shadow: inset 0 0 120px 30px rgba(0,0,0,.55); background: rgba(0,0,0,0); }
-      66%      { box-shadow: inset 0 0 160px 60px rgba(0,0,0,.65); background: rgba(0,0,0,.5); }
-      74%, 100%{ box-shadow: inset 0 0 0 0 rgba(0,0,0,0); background: rgba(0,0,0,0); }
+      0%, 22%   { box-shadow: inset 0 0 0 0 rgba(0,0,0,0); background: rgba(0,0,0,0); }
+      34%       { box-shadow: inset 0 0 140px 40px rgba(0,0,0,.55); background: rgba(0,0,0,0); }
+      66%       { box-shadow: inset 0 0 180px 70px rgba(0,0,0,.6); background: rgba(0,0,0,.55); }
+      74%, 100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0); background: rgba(0,0,0,0); }
     }
-    .captions { position: relative; height: 24px; margin-top: 22px; text-align: center; font-size: 14px; color: var(--muted); }
+    @keyframes face { 0%, 24% { background: #121214; } 26%, 72% { background: var(--bad); } 75%, 100% { background: #121214; } }
+    @keyframes eyes { 0%, 24% { top: 36%; } 26%, 72% { top: 48%; } 75%, 100% { top: 36%; } }
+    .captions { position: relative; height: 26px; margin-top: 24px; text-align: center; font-size: 15px; color: var(--muted); }
     .captions span { position: absolute; inset: 0; opacity: 0; animation: cap 12s infinite; }
-    .captions span:nth-child(2) { animation-delay: 3s; }
-    .captions span:nth-child(3) { animation-delay: 6s; }
-    .captions span:nth-child(4) { animation-delay: 9s; }
+    .captions span:nth-child(2) { animation-delay: 3s; } .captions span:nth-child(3) { animation-delay: 6s; } .captions span:nth-child(4) { animation-delay: 9s; }
     .captions b { color: var(--ink); font-weight: 600; }
     @keyframes cap { 0% { opacity: 0; } 4%, 22% { opacity: 1; } 26%, 100% { opacity: 0; } }
     @media (prefers-reduced-motion: reduce) {
-      .veil { animation: none; box-shadow: inset 0 0 120px 30px rgba(0,0,0,.45); }
-      .captions span { animation: none; }
-      .captions span:nth-child(2) { opacity: 1; }
+      .veil, .screen .mini .f, .screen .mini .f i { animation: none; }
+      .captions span { animation: none; } .captions span:nth-child(1) { opacity: 1; }
     }
 
-    /* features */
-    section.block { padding: 96px 0; border-top: 1px solid var(--hairline); }
-    .head { max-width: 640px; margin-bottom: 52px; }
-    .head p { color: var(--muted); font-size: 19px; margin-top: 16px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-    .card { background: var(--fill); border-radius: var(--radius); padding: 28px; }
-    .card .glyph { width: 36px; height: 36px; border-radius: 10px; background: #fff; display: grid; place-items: center; margin-bottom: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-    .card .glyph svg { width: 18px; height: 18px; stroke: var(--ink); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .card p { color: var(--muted); font-size: 15px; margin-top: 8px; }
+    /* breaks */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .split .head { margin-bottom: 0; }
+    @media (max-width: 860px) { .split { grid-template-columns: 1fr; gap: 48px; } }
+    .breakstage { border-radius: 32px; background: linear-gradient(160deg, #3b3f45, #23262a); aspect-ratio: 5 / 4; display: grid; place-items: center; }
+    .breakcard { width: min(300px, 100%); border-radius: 20px; background: #1c1c1e; border: 1px solid #323236; padding: 28px 24px 20px; display: flex; flex-direction: column; align-items: center; color: #f5f5f7; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+    .breakcard .r { position: relative; width: 112px; height: 112px; }
+    .breakcard .r svg { position: absolute; inset: 0; }
+    .breakcard .r .t { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+    .breakcard .r b { font-size: 28px; font-weight: 650; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .breakcard .r small { font-size: 10.5px; color: #a1a1a8; }
+    .breakcard h3 { font-size: 19px; font-weight: 650; margin-top: 20px; letter-spacing: -.01em; }
+    .breakcard p { margin-top: 6px; font-size: 12.5px; line-height: 1.45; color: #a1a1a8; text-align: center; }
+    .breakcard .snz { margin-top: 20px; width: 100%; height: 34px; display: grid; place-items: center; border-radius: 999px; background: #2c2c30; color: #f5f5f7; font-size: 12.5px; font-weight: 550; }
+
+    /* list */
+    .list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; border-top: 1px solid var(--line); }
+    .list div { padding: 26px 0; border-bottom: 1px solid var(--line); }
+    .list h3 { font-size: 18px; letter-spacing: -.01em; }
+    .list p { color: var(--muted); font-size: 15.5px; margin-top: 6px; }
+    .list kbd { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--chip); padding: 1px 6px; border-radius: 5px; color: var(--ink); }
+    @media (max-width: 760px) { .list { grid-template-columns: 1fr; } }
 
     /* privacy */
-    .privacy { background: var(--ink); color: #fff; border-top: 0 !important; }
-    .privacy .label { color: #6a6a70; }
-    .privacy .head p { color: #a0a0a8; }
-    .privacy ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px 48px; }
-    .privacy li { padding-left: 28px; position: relative; color: #c8c8ce; font-size: 15.5px; }
-    .privacy li b { color: #fff; font-weight: 600; display: block; margin-bottom: 4px; font-size: 16.5px; }
-    .privacy li::before { content: ""; position: absolute; left: 0; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+    .dark { background: var(--ink); color: #f5f5f7; }
+    .dark .eyebrow { color: #8e8e93; }
+    .dark .head p:not(.eyebrow) { color: #b8b8bd; }
+    .privacy { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 64px; }
+    .privacy div { padding-left: 26px; position: relative; }
+    .privacy div::before { content: ""; position: absolute; left: 0; top: 9px; width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+    .privacy h3 { font-size: 18px; letter-spacing: -.01em; }
+    .privacy p { color: #b8b8bd; font-size: 15.5px; margin-top: 6px; }
+    @media (max-width: 760px) { .privacy { grid-template-columns: 1fr; } }
 
     /* install */
-    .steps { counter-reset: step; display: grid; gap: 14px; max-width: 760px; }
-    .step { counter-increment: step; display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 22px 24px; border: 1px solid var(--hairline); border-radius: var(--radius); }
-    .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
-    .step p { color: var(--muted); font-size: 15.5px; margin-top: 4px; }
-    .step code, .note code { font: 13.5px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--fill); padding: 2px 6px; border-radius: 5px; color: var(--ink); }
-    .path { color: var(--ink); font-weight: 500; }
-    .note { max-width: 760px; margin-top: 24px; padding: 18px 22px; border-radius: var(--radius); background: #fff6f6; border: 1px solid #fde0e2; font-size: 14.5px; color: #5a5a60; }
+    .install { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+    .install div { counter-increment: s; border: 1px solid var(--line); border-radius: 20px; padding: 24px; }
+    .install div::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 13px; font-weight: 650; margin-bottom: 18px; }
+    .install h3 { font-size: 17px; letter-spacing: -.01em; }
+    .install p { color: var(--muted); font-size: 14.5px; margin-top: 6px; }
+    .install b { color: var(--ink); font-weight: 600; }
+    .note { margin-top: 20px; font-size: 14.5px; color: var(--muted); }
     .note b { color: var(--ink); }
+    @media (max-width: 960px) { .install { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .install { grid-template-columns: 1fr; } }
 
-    /* final cta + footer */
-    .final { text-align: center; padding: 110px 0; border-top: 1px solid var(--hairline); }
-    .final h2 { margin-bottom: 30px; }
-    footer { border-top: 1px solid var(--hairline); padding: 32px 0 44px; font-size: 13px; color: var(--muted); }
+    /* final */
+    .final { text-align: center; padding: 120px 0; }
+    .final img { width: 96px; height: 96px; margin: 0 auto 28px; }
+    .final h2 { font-size: clamp(34px, 5vw, 56px); letter-spacing: -.035em; }
+    .final .sub { color: var(--ink-2); font-size: 19px; margin: 16px auto 34px; max-width: 520px; }
+    .final .meta { margin-top: 18px; }
+    footer { border-top: 1px solid var(--line); padding: 30px 0 44px; font-size: 13px; color: var(--muted); }
     footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    /* Small phones: last, so it wins over the base rules above. */
+    @media (max-width: 420px) {
+      .wrap { padding: 0 18px; }
+      .stage { padding: 14px; border-radius: 26px; }
+      .pop { width: min(300px, calc(100vw - 64px)); }
+      .chips { flex-wrap: wrap; justify-content: center; }
+      .captions { height: 48px; font-size: 14px; }
+      section { padding: 80px 0; }
+      .breakstage { aspect-ratio: auto; padding: 36px 18px; }
+      .pill { font-size: 12px; white-space: nowrap; }
+      .popfoot { padding: 16px 16px 12px; }
+      .popfoot span { white-space: nowrap; }
+      .popfoot .cam { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+      .screen .bar { gap: 10px; padding: 0 10px; font-size: 11px; white-space: nowrap; }
+      .screen .bar .apps span:nth-child(n+3) { display: none; }
+    }
   </style>
 </head>
 <body>
 
 <nav>
   <div class="wrap">
-    <a class="brand" href="#"><img src="assets/icon.png" alt=""> Spino</a>
+    <a class="brand" href="#"><img src="assets/icon.png" alt="" width="34" height="34"> Spino</a>
     <div class="links">
-      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
       <a href="#privacy">Privacy</a>
       <a href="#install">Install</a>
       <a class="btn small" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg">Download</a>
@@ -182,125 +259,153 @@
 
 <header class="hero">
   <div class="wrap">
-    <img class="icon" src="assets/icon.png" alt="Spino app icon" width="132" height="132">
-    <h1>Sit up, <em>gently.</em></h1>
-    <p class="lede">A quiet companion in your menu bar that watches your posture through the webcam and nudges you to straighten up — without ever stealing your attention.</p>
-    <div class="cta">
-      <a class="btn" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.41 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.14-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.59-.75 2.99-.75 1.4 0 1.79.75 3.01.72 1.24-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.45-3.71zM14.08 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.82 1.03.08 2.07-.52 2.71-1.28z"/></svg>
-        Download for Mac
-      </a>
-      <a class="quiet" href="#install">How to install →</a>
+    <div>
+      <p class="eyebrow"><b>●</b>&nbsp; Posture app for Mac</p>
+      <h1>Back hurts after a day at the Mac?</h1>
+      <p class="lede">It is usually how you sit. <strong>Spino watches your posture through the webcam and dims the screen when you slouch.</strong> Sit up and it clears.</p>
+      <div class="cta">
+        <a class="btn" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.41 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.14-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.59-.75 2.99-.75 1.4 0 1.79.75 3.01.72 1.24-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.45-3.71zM14.08 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.82 1.03.08 2.07-.52 2.71-1.28z"/></svg>
+          Download for Mac
+        </a>
+        <a class="link" href="#how">See how it works →</a>
+      </div>
+      <p class="meta"><span id="version">Free</span><span>macOS 14 or later</span><span>Nothing leaves your Mac</span></p>
     </div>
-    <p class="meta"><span id="version">Free</span> · macOS 14 or later · Apple Silicon &amp; Intel</p>
+
+    <div class="stage" aria-label="The Spino menu: a face inside a break ring, Snooze and Pause buttons">
+      <div class="pop" id="pop">
+        <div class="recal"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div>
+        <div class="hero-face">
+          <div class="ring">
+            <svg width="168" height="168" viewBox="0 0 168 168"><circle cx="84" cy="84" r="79.5" fill="none" stroke="#eeeff1" stroke-width="9"/><circle cx="84" cy="84" r="79.5" fill="none" stroke="#1f9d55" stroke-width="9" stroke-linecap="round" stroke-dasharray="155 500" transform="rotate(-90 84 84)" class="prog"/></svg>
+            <div class="face" data-eyes><i></i><i></i></div>
+          </div>
+          <div class="title" id="popTitle" aria-live="polite">Break in 38 min</div>
+          <div class="chips"><span class="chip">Sitting 17 min</span><span class="chip">Upright 3 h 28 min</span></div>
+        </div>
+        <div class="pills">
+          <button class="pill" id="snooze" type="button" aria-pressed="false"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span>Snooze 30 min</span></button>
+          <button class="pill" id="pause" type="button" aria-pressed="false"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span>Pause</span></button>
+        </div>
+        <div class="addons"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><path d="M16.5 13.5v6M13.5 16.5h6"/></svg>Add-ons</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6b6b72" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="popfoot"><span class="cam"><i></i>FaceTime HD Camera</span><span class="right"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Quit Spino</span></div>
+      </div>
+      <p class="hint">Try the buttons. The eyes follow you.</p>
+    </div>
   </div>
 </header>
 
-<section class="demo" aria-label="How Spino reminds you">
+<section class="mist" id="how">
   <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">How it works</p>
+      <h2>Slouch, and the screen dims. Sit up, and it clears.</h2>
+      <p>No pop-ups, no sounds, no charts to read. Your screen simply gets harder to look at until you sit the way you meant to.</p>
+    </div>
     <div class="screen" aria-hidden="true">
-      <div class="menubar">
-        <div class="apple"><b>Finder</b><span>File</span><span>Edit</span><span>View</span></div>
-        <div class="spino"><img src="assets/menubar.svg" alt=""><i></i></div>
-        <span>Sun 9:41</span>
+      <div class="bar">
+        <div class="apps"><b>Finder</b><span>File</span><span>Edit</span><span>View</span></div>
+        <img src="assets/menubar.svg" alt="">
+        <span>Wed 9:41</span>
       </div>
-      <div class="window"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="win"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="mini"><div class="f" data-eyes><i></i><i></i></div></div>
       <div class="veil"></div>
     </div>
-    <div class="captions">
-      <span><b>Sitting well.</b> Spino stays out of the way.</span>
-      <span><b>Slouching for 3 seconds.</b> The screen edges darken — a quiet cue.</span>
-      <span><b>Still slouching.</b> The whole screen dims slowly, never fully black.</span>
-      <span><b>Straighten up.</b> Everything clears instantly.</span>
+    <div class="captions" aria-live="off">
+      <span><b>Sitting well.</b> Nothing happens.</span>
+      <span><b>Slouching for 3 seconds.</b> The edges darken.</span>
+      <span><b>Still slouching.</b> The screen dims, never fully black.</span>
+      <span><b>Sat up.</b> It clears instantly.</span>
+    </div>
+    <div class="steps3">
+      <div class="step3"><span class="n">01</span><h3>Calibrate in 3 seconds</h3><p>Sit the way you want to sit. That is your baseline, and you can reset it any time.</p></div>
+      <div class="step3"><span class="n">02</span><h3>Work as usual</h3><p>Spino notices slouching, leaning to one side, tilting your head and creeping towards the screen.</p></div>
+      <div class="step3"><span class="n">03</span><h3>Your screen reminds you</h3><p>Three seconds of grace, then a gentle dim. The moment you straighten up, it is gone.</p></div>
     </div>
   </div>
 </section>
 
-<section class="block" id="features">
+<section>
+  <div class="wrap split">
+    <div class="head">
+      <p class="eyebrow">Breaks</p>
+      <h2>Sitting too long is the other half.</h2>
+      <p>After 50 minutes in your chair, Spino asks you to stand up and counts down the minute you spend away. You choose the interval, from 3 to 120 minutes. When the minute is up, the break counts and the timer starts over.</p>
+    </div>
+    <div class="breakstage" aria-label="Spino break card: Time to stand up, with a countdown ring">
+      <div class="breakcard" aria-hidden="true">
+        <div class="r">
+          <svg width="112" height="112" viewBox="0 0 112 112"><circle cx="56" cy="56" r="51" fill="none" stroke="#2c2c30" stroke-width="7"/><circle id="brk" cx="56" cy="56" r="51" fill="none" stroke="#30d158" stroke-width="7" stroke-linecap="round" stroke-dasharray="96 321" transform="rotate(-90 56 56)"/></svg>
+          <div class="t"><b id="brkTime">0:42</b><small>away left</small></div>
+        </div>
+        <h3>Time to stand up</h3>
+        <p>You have been sitting for 50 min.<br>Step away for one minute.</p>
+        <div class="snz">Snooze 1 min</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mist">
   <div class="wrap">
     <div class="head">
-      <p class="label">Features</p>
-      <h2>Calibrate once. Forget it's there.</h2>
-      <p>Spino learns how <em>you</em> sit when you sit well, then only speaks up when you drift away from it.</p>
+      <p class="eyebrow">Out of your way</p>
+      <h2>Lives in the menu bar. Nowhere else.</h2>
     </div>
-    <div class="grid">
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <h3>Personal calibration</h3>
-        <p>Sit the way you want to sit for about three seconds. That becomes your baseline — recalibrate any time from the menu bar.</p>
-      </div>
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg></div>
-        <h3>Posture drift</h3>
-        <p>Detects slouching, sideways lean, head tilt and leaning in too close to the screen.</p>
-      </div>
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18" opacity=".35"/><path d="M8 21h8"/></svg></div>
-        <h3>Gentle escalation</h3>
-        <p>Nothing for the first 3 seconds. Then the edges darken, and the screen dims over ten seconds until you straighten up. Max dim is up to you.</p>
-      </div>
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg></div>
-        <h3>Break reminders</h3>
-        <p>After a stretch of sitting (3–120 min, your choice), a small card asks you to stand up. A minute out of frame counts as a break.</p>
-      </div>
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></svg></div>
-        <h3>Pause when you need to</h3>
-        <p>Snooze alerts for 30 minutes, or pause Spino entirely — the camera stops too. It also pauses on its own when you step away.</p>
-      </div>
-      <div class="card">
-        <div class="glyph"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 7.5a8 8 0 1 0 11.4 0"/></svg></div>
-        <h3>Open at login</h3>
-        <p>Optional and off by default. Uses the system's own Login Items list, so you stay in control.</p>
-      </div>
+    <div class="list">
+      <div><h3>No Dock icon, no windows</h3><p>One small dinosaur next to the clock. Click it to see how you are sitting today.</p></div>
+      <div><h3>Pauses on its own</h3><p>Step away, lock the screen or close the lid, and the camera turns off until you are back.</p></div>
+      <div><h3>Snooze or pause any time</h3><p>Quiet for 30 minutes, or off completely, camera included.</p></div>
+      <div><h3>Handy extras, if you want them</h3><p>Dim the screen at night with <kbd>⌃⌥D</kbd>, keep the Mac awake, or put the display to sleep in one click.</p></div>
     </div>
   </div>
 </section>
 
-<section class="block privacy" id="privacy">
+<section class="dark" id="privacy">
   <div class="wrap">
     <div class="head">
-      <p class="label">Privacy</p>
-      <h2>Your camera never leaves your Mac.</h2>
-      <p>Not as a promise — as a property of the app. macOS enforces it.</p>
+      <p class="eyebrow">Privacy</p>
+      <h2>The camera image never leaves your Mac.</h2>
+      <p>Not a promise. A property of the app, enforced by macOS.</p>
     </div>
-    <ul>
-      <li><b>Processed in memory</b>Every frame is analysed on your Mac with Apple's Vision framework, then dropped. Nothing is recorded or written to disk.</li>
-      <li><b>No network, at all</b>Spino runs in the App Sandbox with the camera as its only capability. There is no networking code, and macOS would block it anyway.</li>
-      <li><b>Camera off when you're away</b>Screen locked, display asleep, Mac asleep or another user logged in — the camera turns off and comes back on its own.</li>
-      <li><b>Always visible</b>A green dot in the menu bar shows exactly when the camera is active.</li>
-      <li><b>Almost nothing stored</b>The only saved data is your calibration: five numbers, their tolerances and a timestamp.</li>
-      <li><b>No account, no tracking</b>No sign-up, no analytics, no telemetry. Just the app.</li>
-    </ul>
+    <div class="privacy">
+      <div><h3>Processed in memory</h3><p>Every frame is analysed on your Mac with Apple's Vision framework, then dropped. Nothing is recorded or saved.</p></div>
+      <div><h3>No network at all</h3><p>Spino runs in the App Sandbox with the camera as its only permission. There is no networking code to begin with.</p></div>
+      <div><h3>You always know</h3><p>A green dot shows exactly when the camera is on.</p></div>
+      <div><h3>No account, no tracking</h3><p>No sign-up, no analytics. The only thing stored is your calibration: a handful of numbers.</p></div>
+    </div>
   </div>
 </section>
 
-<section class="block" id="install">
+<section id="install">
   <div class="wrap">
     <div class="head">
-      <p class="label">Install</p>
-      <h2>Up and running in a minute.</h2>
-      <p>Spino isn't from the App Store yet, so macOS asks you to approve it once.</p>
+      <p class="eyebrow">Install</p>
+      <h2>Running in a minute.</h2>
+      <p>Spino is not in the App Store yet, so macOS asks you to approve it once.</p>
     </div>
-    <div class="steps">
-      <div class="step"><div><h3>Download and drag to Applications</h3><p>Open <code>Spino.dmg</code> and drag Spino onto the <span class="path">Applications</span> folder.</p></div></div>
-      <div class="step"><div><h3>Try to open it once</h3><p>Launch Spino from Applications. macOS will say it can't verify the developer — click <span class="path">Done</span>.</p></div></div>
-      <div class="step"><div><h3>Allow it in System Settings</h3><p>Go to <span class="path">System Settings → Privacy &amp; Security</span>, scroll down and click <span class="path">Open Anyway</span> next to Spino. Confirm with your password or Touch ID.</p></div></div>
-      <div class="step"><div><h3>Allow the camera and calibrate</h3><p>Spino lives in the menu bar (no Dock icon). Grant camera access, sit up straight for three seconds, and you're done.</p></div></div>
+    <div class="install">
+      <div><h3>Drag to Applications</h3><p>Open <b>Spino.dmg</b> and drag Spino into <b>Applications</b>.</p></div>
+      <div><h3>Open it once</h3><p>macOS says it cannot verify the developer. Click <b>Done</b>.</p></div>
+      <div><h3>Allow it</h3><p><b>System Settings → Privacy &amp; Security</b>, scroll down, click <b>Open Anyway</b>.</p></div>
+      <div><h3>Allow the camera</h3><p>Spino appears in the menu bar. Grant camera access and calibrate.</p></div>
     </div>
-    <p class="note"><b>On macOS 14 Sonoma</b> you can skip step 3: right-click Spino in Applications, choose <b>Open</b>, then <b>Open</b> again. You only need to do this once per version.</p>
+    <p class="note"><b>On macOS 14 Sonoma</b> you can skip step 3: right-click Spino in Applications, choose <b>Open</b>, then <b>Open</b> again. Once per version.</p>
   </div>
 </section>
 
-<section class="final">
+<section class="final mist">
   <div class="wrap">
-    <h2>Your spine will thank you.</h2>
+    <img src="assets/icon.png" alt="" width="96" height="96">
+    <h2>Give your back a break.</h2>
+    <p class="sub">Free, private, and quiet until you slouch.</p>
     <a class="btn" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.41 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.14-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.59-.75 2.99-.75 1.4 0 1.79.75 3.01.72 1.24-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.45-3.71zM14.08 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.77-.97 2.82 1.03.08 2.07-.52 2.71-1.28z"/></svg>
       Download for Mac
     </a>
-    <p class="meta"><a href="https://github.com/spinoapp/spinoapp.github.io/releases">All versions &amp; release notes</a></p>
+    <p class="meta"><span>macOS 14 or later</span><span>Apple Silicon &amp; Intel</span><span><a class="link" href="https://github.com/spinoapp/spinoapp.github.io/releases">Release notes</a></span></p>
   </div>
 </section>
 
@@ -312,13 +417,90 @@
 </footer>
 
 <script>
+  // Eyes: follow the pointer, wander a little when nobody moves, blink now and then.
+  (() => {
+    const faces = [...document.querySelectorAll("[data-eyes]")];
+    if (!faces.length || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let target = null, last = 0;
+    const look = (x, y) => { target = { x, y }; last = performance.now(); };
+    addEventListener("pointermove", e => look(e.clientX, e.clientY), { passive: true });
+    addEventListener("touchstart", e => { const t = e.touches[0]; if (t) look(t.clientX, t.clientY); }, { passive: true });
+    const pos = faces.map(() => ({ x: 0, y: 0 }));
+    const frame = t => {
+      const idle = !target || t - last > 3500;
+      faces.forEach((f, i) => {
+        const r = f.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        const max = r.width * 0.07;
+        let dx, dy;
+        if (idle) {
+          dx = Math.sin(t / 1900 + i * 2) * 0.55;
+          dy = Math.cos(t / 2600 + i) * 0.3;
+        } else {
+          const vx = target.x - (r.left + r.width / 2), vy = target.y - (r.top + r.height / 2);
+          const d = Math.hypot(vx, vy) || 1, k = Math.min(1, d / 320);
+          dx = vx / d * k; dy = vy / d * k;
+        }
+        pos[i].x += (dx * max - pos[i].x) * 0.12;
+        pos[i].y += (dy * max - pos[i].y) * 0.12;
+        f.style.setProperty("--ex", pos[i].x.toFixed(2) + "px");
+        f.style.setProperty("--ey", pos[i].y.toFixed(2) + "px");
+      });
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+    const blink = () => {
+      faces.forEach(f => { f.classList.add("blink"); setTimeout(() => f.classList.remove("blink"), 130); });
+      setTimeout(blink, 2600 + Math.random() * 4200);
+    };
+    setTimeout(blink, 1600);
+  })();
+
+  // The menu in the hero: Snooze and Pause work like in the app.
+  (() => {
+    const pop = document.getElementById("pop"), title = document.getElementById("popTitle");
+    const snooze = document.getElementById("snooze"), pause = document.getElementById("pause");
+    if (!pop) return;
+    let paused = false, snoozed = false;
+    const render = () => {
+      pop.classList.toggle("paused", paused);
+      title.textContent = paused ? "Paused" : snoozed ? "Alerts snoozed" : "Break in 38 min";
+      pause.setAttribute("aria-pressed", paused);
+      pause.querySelector("span").textContent = paused ? "Resume" : "Pause";
+      snooze.setAttribute("aria-pressed", snoozed && !paused);
+      snooze.disabled = paused;
+      snooze.style.opacity = paused ? .45 : 1;
+      snooze.querySelector("span").textContent = snoozed ? "Resume alerts" : "Snooze 30 min";
+    };
+    pause.addEventListener("click", () => { paused = !paused; render(); });
+    snooze.addEventListener("click", () => { snoozed = !snoozed; render(); });
+  })();
+
+  // Break card: counts down the minute away when it scrolls into view.
+  (() => {
+    const ring = document.getElementById("brk"), time = document.getElementById("brkTime");
+    if (!ring || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const C = 2 * Math.PI * 51;
+    let left = 42, timer = null;
+    const draw = () => {
+      time.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+      ring.setAttribute("stroke-dasharray", `${(C * (60 - left) / 60).toFixed(1)} ${C.toFixed(1)}`);
+    };
+    const tick = () => { left = left <= 0 ? 60 : left - 1; draw(); };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !timer) { timer = setInterval(tick, 1000); }
+      if (!e.isIntersecting && timer) { clearInterval(timer); timer = null; }
+    }).observe(ring.closest(".breakcard"));
+    draw();
+  })();
+
   // Fill in the current version from the latest GitHub release; the static text is the fallback.
   fetch("https://api.github.com/repos/spinoapp/spinoapp.github.io/releases/latest")
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(rel => {
       const dmg = (rel.assets || []).find(a => a.name.endsWith(".dmg"));
       const size = dmg ? ` · ${(dmg.size / 1048576).toFixed(1)} MB` : "";
-      document.getElementById("version").textContent = `Version ${rel.tag_name.replace(/^v/, "")}${size}`;
+      document.getElementById("version").textContent = `Free · version ${rel.tag_name.replace(/^v/, "")}${size}`;
     })
     .catch(() => {});
 </script>
