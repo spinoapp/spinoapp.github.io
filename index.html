@@ -121,6 +121,35 @@
 
     /* sections */
     section { padding: 112px 0; }
+    /* Scroll reveal: only when JS runs and motion is welcome */
+    .reveal-on .rv { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0s); }
+    .reveal-on .rv.in { opacity: 1; transform: none; }
+    .pain-photo { will-change: transform; }
+    .pain { position: relative; padding: 0; height: clamp(520px, 44vw, 640px); overflow: hidden; background: #f4f4f1; }
+    .pain-photo { position: absolute; inset: 0; }
+    .pain-photo img, .pain-photo svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left center; display: block; }
+    .pain-marks path { transform-box: fill-box; transform-origin: center; animation: ache 2.4s ease-in-out infinite; }
+    .pain-marks path:nth-child(2) { animation-delay: .15s; } .pain-marks path:nth-child(3) { animation-delay: .3s; } .pain-marks path:nth-child(4) { animation-delay: .45s; }
+    @keyframes ache { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.9); } }
+    @media (prefers-reduced-motion: reduce) { .pain-marks path { animation: none; } }
+    .pain-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(270deg, rgba(255,255,255,.97) 0%, rgba(255,255,255,.92) 38%, rgba(255,255,255,0) 64%); }
+    .pain-copy { position: relative; z-index: 1; height: 100%; display: flex; align-items: center; justify-content: flex-end; }
+    .pain-text { width: min(440px, 100%); }
+    .pain h2 { font-size: clamp(34px, 4.4vw, 52px); font-weight: 800; letter-spacing: -.035em; line-height: 1.02; }
+    .pain-day { list-style: none; padding: 0; margin: 34px 0 0; display: grid; gap: 0; border-left: 2px solid var(--line); }
+    .pain-day li { position: relative; display: grid; grid-template-columns: 62px 1fr; gap: 12px; padding: 0 0 18px 22px; font-size: 17px; color: var(--ink-2); }
+    .pain-day li:last-child { padding-bottom: 0; }
+    .pain-day li::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid #c9c9ce; }
+    .pain-day time { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .pain-day li.now { color: var(--ink); font-weight: 700; font-size: 19px; }
+    .pain-day li.now time { color: var(--red); }
+    .pain-day li.now::before { background: var(--red); border-color: var(--red); box-shadow: 0 0 0 5px rgba(237,4,18,.15); }
+    @media (max-width: 760px) {
+      .pain { height: auto; aspect-ratio: auto; background: #fff; }
+      .pain-photo { position: relative; aspect-ratio: 4 / 3; }
+      .pain-photo::after { background: linear-gradient(0deg, #fff 0%, rgba(255,255,255,0) 30%); }
+      .pain-copy { height: auto; display: block; padding-bottom: 72px; }
+    }
     section.mist { background: var(--mist); }
     .head { max-width: 680px; margin-bottom: 56px; }
     .head h2 { font-size: clamp(32px, 4.4vw, 48px); margin-top: 14px; }
@@ -281,6 +310,7 @@
       <a href="#how">How it works</a>
       <a href="#privacy">Privacy</a>
       <a href="#install">Install</a>
+      <a href="#pricing">Price</a>
       <a class="btn small" href="https://github.com/spinoapp/spinoapp.github.io/releases/latest/download/Spino.dmg" data-umami-event="download" data-umami-event-place="nav">Download</a>
     </div>
   </div>
@@ -325,6 +355,24 @@
   </div>
 </header>
 
+<section class="pain">
+  <div class="pain-photo">
+    <img src="assets/pain.jpg" alt="A man at his desk, holding the back of his aching neck" width="1280" height="720" loading="lazy">
+    <svg viewBox="0 0 1280 720" preserveAspectRatio="xMinYMid slice" aria-hidden="true"><g class="pain-marks" fill="#ED0412"><path d="M398 346L395 322L422 326L412 349Z"/><path d="M432 358L448 325L476 349L446 370Z"/><path d="M457 385L498 357L514 401L464 405Z"/><path d="M466 420L530 414L520 473L461 445Z"/></g></svg>
+  </div>
+  <div class="wrap pain-copy">
+    <div class="pain-text">
+      <h2>4 p.m.<br>Neck again.</h2>
+      <ol class="pain-day">
+        <li><time>9 a.m.</time><span>You sit down straight. Fresh coffee, good intentions.</span></li>
+        <li><time>11 a.m.</time><span>A tricky email. You lean in, just a little.</span></li>
+        <li><time>2 p.m.</time><span>Shoulders up, chin forward. You do not notice.</span></li>
+        <li class="now"><time>4 p.m.</time><span>Your neck does.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <section class="mist" id="how">
   <div class="wrap">
     <div class="head">
@@ -367,7 +415,7 @@
     <div class="head">
       <p class="eyebrow">Breaks</p>
       <h2>Sitting too long is the other half.</h2>
-      <p>After 50 minutes in your chair, Spino asks you to stand up and counts down the minute you spend away. You choose the interval, from 3 to 120 minutes. When the minute is up, the break counts and the timer starts over.</p>
+      <p>After 45 minutes in your chair, Spino asks you to stand up and counts down the minute you spend away. You choose the interval, from 3 to 120 minutes. When the minute is up, the break counts and the timer starts over.</p>
     </div>
     <div class="breakstage" aria-label="Spino break card: Time to stand up, with a countdown ring">
       <div class="breakcard" aria-hidden="true">
@@ -376,7 +424,7 @@
           <div class="t"><b id="brkTime">0:42</b><small>away left</small></div>
         </div>
         <h3>Time to stand up</h3>
-        <p>You have been sitting for 50 min.<br>Step away for one minute.</p>
+        <p>You have been sitting for 45 min.<br>Step away for one minute.</p>
         <div class="snz">Snooze 1 min</div>
       </div>
     </div>
@@ -409,7 +457,7 @@
       <div><h3>Processed in memory</h3><p>Every frame is analysed on your Mac with Apple's Vision framework, then dropped. Nothing is recorded or saved.</p></div>
       <div><h3>No network at all</h3><p>Spino runs in the App Sandbox with the camera as its only permission. There is no networking code to begin with.</p></div>
       <div><h3>You always know</h3><p>A green dot shows exactly when the camera is on.</p></div>
-      <div><h3>No account, no tracking</h3><p>No sign-up, no analytics. The only thing stored is your calibration: a handful of numbers.</p></div>
+      <div><h3>No account, no tracking</h3><p>No sign-up, and no analytics inside the app. The only thing stored is your calibration: a handful of numbers.</p></div>
     </div>
   </div>
 </section>
@@ -476,7 +524,7 @@
   <div class="wrap">
     <span>© 2026 Spino</span>
     <span>Made on a Mac, for the people sitting in front of one.</span>
-    <span>Questions? <a href="mailto:acellary+spino@gmail.com">acellary+spino@gmail.com</a></span>
+    <span>Questions? <a href="mailto:acellary+spino@gmail.com?subject=Spino">Send us an email</a></span>
   </div>
 </footer>
 
@@ -576,6 +624,40 @@
     dlg.addEventListener("click", e => { if (e.target === dlg) shut(); });
     dlg.addEventListener("close", () => video.pause());
     video.addEventListener("ended", () => setTimeout(shut, 600));
+  })();
+
+  // Gentle scroll motion: sections fade up as they arrive, the pain photo drifts a little.
+  (() => {
+    if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const groups = [
+      ".pain-text h2", ".pain-day li",
+      "section .head", ".screen-wrap", ".captions", ".step3",
+      ".breakstage", ".list > div", ".privacy > div", ".install > div", ".note",
+      ".tiers", ".tiers-foot", ".final .wrap > *"
+    ];
+    const els = [];
+    groups.forEach(sel => {
+      const list = document.querySelectorAll(sel);
+      list.forEach(el => { const i = Array.prototype.indexOf.call(el.parentNode.children, el); el.classList.add("rv"); el.style.setProperty("--d", (Math.min(i, 5) * 0.08) + "s"); els.push(el); });
+    });
+    document.documentElement.classList.add("reveal-on");
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    }), { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+
+    const pain = document.querySelector(".pain"), photo = document.querySelector(".pain-photo");
+    if (!pain || !photo) return;
+    let ticking = false;
+    const drift = () => {
+      ticking = false;
+      const r = pain.getBoundingClientRect(), vh = innerHeight;
+      if (r.bottom < 0 || r.top > vh) return;
+      const t = (r.top + r.height / 2 - vh / 2) / vh; // -1..1 around the centre
+      photo.style.transform = `translateY(${(t * -16).toFixed(1)}px) scale(1.06)`;
+    };
+    addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(drift); } }, { passive: true });
+    drift();
   })();
 </script>
 </body>
