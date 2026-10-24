@@ -124,10 +124,11 @@
     /* Scroll reveal: only when JS runs and motion is welcome */
     .reveal-on .rv { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0s); }
     .reveal-on .rv.in { opacity: 1; transform: none; }
-    .pain-photo { will-change: transform; }
-    .pain { position: relative; padding: 0; height: clamp(520px, 44vw, 640px); overflow: hidden; background: #f4f4f1; }
+    .pain { position: relative; padding: 0; background: #f4f4f1; }
+    .pain-stage { position: relative; height: clamp(520px, 44vw, 640px); overflow: hidden; }
     .pain-photo { position: absolute; inset: 0; }
-    .pain-photo img, .pain-photo svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left center; display: block; }
+    .pain-photo canvas { display: none; }
+    .pain-photo img, .pain-photo svg, .pain-photo canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left center; display: block; }
     .pain-marks path { transform-box: fill-box; transform-origin: center; animation: ache 2.4s ease-in-out infinite; }
     .pain-marks path:nth-child(2) { animation-delay: .15s; } .pain-marks path:nth-child(3) { animation-delay: .3s; } .pain-marks path:nth-child(4) { animation-delay: .45s; }
     @keyframes ache { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.9); } }
@@ -145,10 +146,27 @@
     .pain-day li.now time { color: var(--red); }
     .pain-day li.now::before { background: var(--red); border-color: var(--red); box-shadow: 0 0 0 5px rgba(237,4,18,.15); }
     @media (max-width: 760px) {
-      .pain { height: auto; aspect-ratio: auto; background: #fff; }
+      .pain { background: #fff; }
+      .pain-stage { height: auto; }
       .pain-photo { position: relative; aspect-ratio: 4 / 3; }
       .pain-photo::after { background: linear-gradient(0deg, #fff 0%, rgba(255,255,255,0) 30%); }
       .pain-copy { height: auto; display: block; padding-bottom: 72px; }
+    }
+    /* Scroll-scrubbed version: the section pins while the clip plays with the scroll */
+    .pain.scrub { height: 280vh; }
+    .pain.scrub .pain-stage { position: sticky; top: 0; height: 100vh; min-height: 540px; }
+    .pain.scrub .pain-photo canvas { display: block; }
+    .pain.scrub .pain-photo img { visibility: hidden; }
+    .pain.scrub .pain-photo svg { opacity: var(--marks, 0); }
+    .pain.scrub .pain-day li { opacity: .28; transition: opacity .35s ease; }
+    .pain.scrub .pain-day li.on { opacity: 1; }
+    .pain.scrub .pain-day li.now:not(.on)::before { background: #fff; border-color: #c9c9ce; box-shadow: none; }
+    @media (max-width: 760px) {
+      .pain.scrub { height: 240vh; }
+      .pain.scrub .pain-stage { padding-top: 64px; box-sizing: border-box; min-height: 0; }
+      .pain.scrub .pain-copy { padding-bottom: 16px; }
+      .pain.scrub .pain-day { margin-top: 20px; }
+      .pain.scrub .pain-day li { padding-bottom: 12px; font-size: 15.5px; }
     }
     section.mist { background: var(--mist); }
     .head { max-width: 680px; margin-bottom: 56px; }
@@ -355,8 +373,10 @@
   </div>
 </header>
 
-<section class="pain">
+<section class="pain" id="pain">
+  <div class="pain-stage">
   <div class="pain-photo">
+    <canvas width="1280" height="720" aria-hidden="true"></canvas>
     <img src="assets/pain.jpg" alt="A man at his desk, holding the back of his aching neck" width="1280" height="720" loading="lazy">
     <svg viewBox="0 0 1280 720" preserveAspectRatio="xMinYMid slice" aria-hidden="true"><g class="pain-marks" fill="#ED0412"><path d="M398 346L395 322L422 326L412 349Z"/><path d="M432 358L448 325L476 349L446 370Z"/><path d="M457 385L498 357L514 401L464 405Z"/><path d="M466 420L530 414L520 473L461 445Z"/></g></svg>
   </div>
@@ -370,6 +390,7 @@
         <li class="now"><time>4 p.m.</time><span>Your neck does.</span></li>
       </ol>
     </div>
+  </div>
   </div>
 </section>
 
@@ -630,7 +651,6 @@
   (() => {
     if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const groups = [
-      ".pain-text h2", ".pain-day li",
       "section .head", ".screen-wrap", ".captions", ".step3",
       ".breakstage", ".list > div", ".privacy > div", ".install > div", ".note",
       ".tiers", ".tiers-foot", ".final .wrap > *"
@@ -646,18 +666,56 @@
     }), { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
     els.forEach(el => io.observe(el));
 
-    const pain = document.querySelector(".pain"), photo = document.querySelector(".pain-photo");
-    if (!pain || !photo) return;
-    let ticking = false;
-    const drift = () => {
-      ticking = false;
-      const r = pain.getBoundingClientRect(), vh = innerHeight;
-      if (r.bottom < 0 || r.top > vh) return;
-      const t = (r.top + r.height / 2 - vh / 2) / vh; // -1..1 around the centre
-      photo.style.transform = `translateY(${(t * -16).toFixed(1)}px) scale(1.06)`;
+  })();
+
+  // The 4 p.m. story, scrubbed by the scroll: 61 frames of the man slumping and
+  // grabbing his neck, the day's timeline lighting up, the red pain marks last.
+  (() => {
+    const pain = document.getElementById("pain");
+    if (!pain || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const canvas = pain.querySelector("canvas"), ctx = canvas.getContext("2d");
+    const svg = pain.querySelector(".pain-photo svg");
+    const items = pain.querySelectorAll(".pain-day li");
+    const N = 61, frames = new Array(N);
+    let current = -1, wanted = 0, loading = false;
+    const src = i => `assets/pain-frames/f${String(i + 1).padStart(3, "0")}.jpg`;
+    const draw = i => {
+      // Fall back to the nearest frame that has arrived.
+      for (let d = 0; d < N; d++) {
+        for (const j of [i - d, i + d]) {
+          const f = frames[j];
+          if (f && f.complete && f.naturalWidth) {
+            if (j !== current) { ctx.drawImage(f, 0, 0, 1280, 720); current = j; }
+            return;
+          }
+        }
+      }
     };
-    addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(drift); } }, { passive: true });
-    drift();
+    const load = () => {
+      if (loading) return; loading = true;
+      // First, last and a coarse pass, then everything else.
+      const order = [0, N - 1];
+      for (let step of [8, 4, 2, 1]) for (let i = 0; i < N; i += step) if (!order.includes(i)) order.push(i);
+      order.forEach(i => { const im = new Image(); im.decoding = "async"; im.onload = () => draw(wanted); im.src = src(i); frames[i] = im; });
+    };
+    const clamp = v => Math.max(0, Math.min(1, v));
+    const update = () => {
+      const r = pain.getBoundingClientRect(), span = r.height - innerHeight;
+      // 0 as soon as the section peeks in at the bottom, 1 where the pinned part ends.
+      const p = clamp((innerHeight - r.top) / (innerHeight + Math.max(span, 0)));
+      const v = clamp(p / 0.82);                       // clip done at 82%, then hold
+      wanted = Math.round(v * (N - 1));
+      draw(wanted);
+      svg.style.setProperty("--marks", clamp((p - 0.6) / 0.12).toFixed(2));
+      const steps = [0, 0.18, 0.38, 0.6];
+      items.forEach((li, i) => li.classList.toggle("on", p >= steps[i]));
+    };
+    pain.classList.add("scrub");
+    new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) load(); }, { rootMargin: "1200px 0px" }).observe(pain);
+    let ticking = false;
+    addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
+    addEventListener("resize", update);
+    update();
   })();
 </script>
 </body>
